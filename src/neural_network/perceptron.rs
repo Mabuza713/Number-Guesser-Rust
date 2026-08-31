@@ -1,8 +1,8 @@
 use std::{ptr::read, result};
 
 pub struct PerceptronData {
-    weights: Vec<f64>,
-    bias: f64,
+    pub weights: Vec<f64>,
+    pub bias: f64,
     pub activation: f64,
 }
 pub trait Perceptron {
@@ -46,7 +46,7 @@ impl Perceptron for ReLUPerceptron {
     }
 }
 
-struct Softmax {
+pub struct Softmax {
     pub data: PerceptronData,
     pub exp_value: f64,
     pub sum_exp: f64,
@@ -76,5 +76,42 @@ impl Softmax {
 
     pub fn set_sum_exp(&mut self, value: f64) {
         self.sum_exp = value
+    }
+}
+
+pub enum PerceptronKind {
+    ReLU(ReLUPerceptron),
+    Softmax(Softmax),
+}
+
+impl Perceptron for PerceptronKind {
+    fn data(&self) -> &PerceptronData {
+        match self {
+            PerceptronKind::ReLU(p) => p.data(),
+            PerceptronKind::Softmax(p) => p.data(),
+        }
+    }
+
+    fn activation_function(&mut self, inputs: &Vec<f64>) {
+        match self {
+            PerceptronKind::ReLU(p) => p.activation_function(inputs),
+            PerceptronKind::Softmax(p) => p.activation_function(inputs),
+        }
+    }
+
+    fn derevative(&mut self) -> f64 {
+        match self {
+            PerceptronKind::ReLU(p) => p.derevative(),
+            PerceptronKind::Softmax(p) => p.derevative(),
+        }
+    }
+}
+
+impl PerceptronKind {
+    pub fn as_softmax_mut(&mut self) -> Option<&mut Softmax> {
+        match self {
+            PerceptronKind::Softmax(s) => Some(s),
+            _ => None,
+        }
     }
 }

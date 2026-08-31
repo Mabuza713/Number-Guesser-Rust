@@ -1,12 +1,12 @@
 use std::io::{self};
 
 pub struct Image {
-    pub matrix: Vec<Vec<u8>>,
+    pub matrix: Vec<Vec<f64>>,
     pub number: u8,
 }
 impl Image {
-    pub fn flatten_matrix(&self) -> Vec<u8> {
-        let mut result: Vec<u8> = Vec::new();
+    pub fn flatten_matrix(&self) -> Vec<f64> {
+        let mut result: Vec<f64> = Vec::new();
         for row in &self.matrix {
             for &pixel in row {
                 result.push(pixel);
@@ -17,8 +17,8 @@ impl Image {
     }
 }
 
-fn parse_bytes_to_matrix(bytes_vec: &[u8]) -> Vec<Vec<u8>> {
-    let mut matrix: Vec<Vec<u8>> = Vec::new();
+fn parse_bytes_to_matrix(bytes_vec: &[u8]) -> Vec<Vec<f64>> {
+    let mut matrix: Vec<Vec<f64>> = Vec::new();
 
     // in .bmp files
     // 18-21 bajt is width
@@ -48,7 +48,7 @@ fn parse_bytes_to_matrix(bytes_vec: &[u8]) -> Vec<Vec<u8>> {
     println!("Parsing picture of size {}x{}", width, height);
 
     for x in (0..height).rev() {
-        let mut row: Vec<u8> = Vec::with_capacity(width);
+        let mut row: Vec<f64> = Vec::with_capacity(width);
         let row_start = offset + x * row_stride;
 
         for y in 0..width {
@@ -59,7 +59,7 @@ fn parse_bytes_to_matrix(bytes_vec: &[u8]) -> Vec<Vec<u8>> {
             let r: u8 = bytes_vec[px + 2];
 
             // I need to parse it to u16 cuz in rust it adds u8's which overflows
-            let grey = ((b as u16 + g as u16 + r as u16) / 3) as u8;
+            let grey = ((b as u16 + g as u16 + r as u16) / 3) as f64;
             row.push(grey);
         }
         println!("{:?}", row);
@@ -71,14 +71,13 @@ fn parse_bytes_to_matrix(bytes_vec: &[u8]) -> Vec<Vec<u8>> {
 }
 
 pub fn load_data(image_path: String) -> Result<Image, io::Error> {
-    // let bytes: Vec<u8> = match std::fs::read(image_path) {
+    // let bytes: Vec<f64> = match std::fs::read(image_path) {
     //     Ok(data) => data,
     //     Err(err) => return Err(err),
     // };
     // This is the same things i guess still leave it cuz learning
     let bytes: Vec<u8> = std::fs::read(image_path)?;
-
-    let matrix: Vec<Vec<u8>> = parse_bytes_to_matrix(&bytes);
+    let matrix: Vec<Vec<f64>> = parse_bytes_to_matrix(&bytes);
     println!("[TEST] loaded {} of bytes.", bytes.len());
 
     let temp_number: u8 = 2;

@@ -9,6 +9,9 @@ pub mod scanner;
 #[path = "neural_network/perceptron.rs"]
 pub mod perceptron;
 
+#[path = "neural_network/neural_network.rs"]
+pub mod neural_network;
+
 fn main() {
     let test_path: String =
         "C:\\Users\\uxbei\\Desktop\\Rust\\Number-Guesser-Rust\\src\\images\\test_3.bmp".to_string();
