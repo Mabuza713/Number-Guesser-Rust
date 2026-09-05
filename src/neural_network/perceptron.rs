@@ -8,6 +8,8 @@ pub struct PerceptronData {
 pub trait Perceptron {
     fn data(&self) -> &PerceptronData;
 
+    fn data_mut(&mut self) -> &mut PerceptronData;
+
     fn weighted_sum(&self, inputs: &Vec<f64>) -> f64 {
         let data: &PerceptronData = self.data();
 
@@ -32,6 +34,9 @@ impl Perceptron for ReLUPerceptron {
     fn data(&self) -> &PerceptronData {
         &self.data
     }
+    fn data_mut(&mut self) -> &mut PerceptronData {
+        &mut self.data
+    }
 
     fn activation_function(&mut self, inputs: &Vec<f64>) {
         self.data.activation = self.weighted_sum(inputs).max(0.)
@@ -54,6 +59,9 @@ pub struct Softmax {
 impl Perceptron for Softmax {
     fn data(&self) -> &PerceptronData {
         &self.data
+    }
+    fn data_mut(&mut self) -> &mut PerceptronData {
+        &mut self.data
     }
 
     fn activation_function(&mut self, inputs: &Vec<f64>) {
@@ -89,6 +97,13 @@ impl Perceptron for PerceptronKind {
         match self {
             PerceptronKind::ReLU(p) => p.data(),
             PerceptronKind::Softmax(p) => p.data(),
+        }
+    }
+
+    fn data_mut(&mut self) -> &mut PerceptronData {
+        match self {
+            PerceptronKind::ReLU(p) => p.data_mut(),
+            PerceptronKind::Softmax(p) => p.data_mut(),
         }
     }
 

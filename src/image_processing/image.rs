@@ -15,6 +15,12 @@ impl Image {
 
         result
     }
+
+    pub fn one_hot(&self, classes: usize) -> Vec<f64> {
+        let mut y = vec![0.0; classes];
+        y[self.number as usize] = 1.0;
+        y
+    }
 }
 
 fn parse_bytes_to_matrix(bytes_vec: &[u8]) -> Vec<Vec<f64>> {
